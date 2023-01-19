@@ -1115,10 +1115,12 @@ static void P_KillMobj(mobj_t *source, mobj_t *target)
   else
   {
     xdeath_limit = heretic ? (target->info->spawnhealth >> 1) : target->info->spawnhealth;
-    if (target->health < -xdeath_limit && target->info->xdeathstate)
-      P_SetMobjState (target, target->info->xdeathstate);
+    if (target->effect == me_explosive)
+      P_SetMobjState(target, S_BEXP);
+    else if ((target->effect == me_fragile || target->health < -xdeath_limit) && target->info->xdeathstate)
+      P_SetMobjState(target, target->info->xdeathstate);
     else
-      P_SetMobjState (target, target->info->deathstate);
+      P_SetMobjState(target, target->info->deathstate);
   }
 
   target->tics -= P_Random(pr_killtics)&3;

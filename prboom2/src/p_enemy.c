@@ -366,6 +366,13 @@ static dboolean P_Move(mobj_t *actor, dboolean dropoff) /* killough 9/12/98 */
     movefactor = P_GetMoveFactor(actor, &friction);
 
   speed = actor->info->speed;
+  if (actor->effect == me_slow)
+    speed = (int)(0.5f * speed);
+  else if (actor->effect == me_fast)
+    speed = (int)(1.4f * speed);
+  else if (actor->effect == me_usainbolt)
+    speed = (int)(2.5f * speed);
+
 
   if (friction < ORIG_FRICTION &&     // sludge
       !(speed = ((ORIG_FRICTION_FACTOR - (ORIG_FRICTION_FACTOR-movefactor)/2)
@@ -678,7 +685,13 @@ static void P_NewChaseDir(mobj_t *actor)
   mobj_t *target = actor->target;
   fixed_t deltax = target->x - actor->x;
   fixed_t deltay = target->y - actor->y;
-
+  
+  if (actor->effect == me_backslider)
+  {
+    deltax = -deltax;
+    deltay = -deltay;
+  }
+  
   // killough 8/8/98: sometimes move away from target, keeping distance
   //
   // 1) Stay a certain distance away from a friend, to avoid being in their way
@@ -1093,6 +1106,9 @@ void A_Look(mobj_t *actor)
   actor->threshold = 0; // any shot will wake up
 
   if (targ && targ->player && (targ->player->cheats & CF_NOTARGET))
+    return;
+  
+  if (actor->effect == me_comatose)
     return;
 
   /* killough 7/18/98:

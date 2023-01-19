@@ -1738,6 +1738,33 @@ mobj_t* P_SpawnMobj(fixed_t x,fixed_t y,fixed_t z,mobjtype_t type)
   P_AddThinker(&mobj->thinker);
   if (!((mobj->flags ^ MF_COUNTKILL) & (MF_FRIEND | MF_COUNTKILL)))
     totallive++;
+  
+  if (type != MT_PLAYER && ((mobj->flags & MF_COUNTKILL) || type == MT_SKULL))
+  {
+    mobj->effect = ((P_Random(pr_mobeffect) << 8) | P_Random(pr_mobeffect)) % 30;
+    //mobj->effect = me_billiejean;
+  }
+  if (mobj->effect >= ME_COUNT)
+    mobj->effect = me_normal;
+  
+  switch (mobj->effect)
+  {
+  case me_tank:
+    mobj->health += 1200;
+    break;
+  case me_fragile:
+    mobj->health = 1;
+    break;
+  case me_flying:
+    mobj->flags ^= MF_FLOAT|MF_NOGRAVITY;
+    break;
+  case me_invisible:
+    mobj->flags ^= MF_SHADOW;
+    break;
+  case me_comatose:
+    mobj->flags |= MF_AMBUSH;
+    break;
+  }
 
   dsda_WatchSpawn(mobj);
 
@@ -2629,7 +2656,7 @@ dboolean P_CheckMissileSpawn (mobj_t* th)
 // P_SpawnMissile
 //
 
-mobj_t* P_SpawnMissile(mobj_t* source,mobj_t* dest,mobjtype_t type)
+mobj_t* P_SpawnMissileBase(mobj_t* source,mobj_t* dest,mobjtype_t type)
 {
   fixed_t z;
   mobj_t* th;
@@ -2714,6 +2741,29 @@ mobj_t* P_SpawnMissile(mobj_t* source,mobj_t* dest,mobjtype_t type)
   return (P_CheckMissileSpawn(th) ? th : NULL);
 }
 
+mobj_t* P_SpawnMissile(mobj_t* source,mobj_t* dest,mobjtype_t type)
+{
+  if (source->effect == me_spamlord)
+  {
+    mobj_t *mo;
+    int    an;
+    const int SPREAD = (ANG90/12);
+    
+    mo = P_SpawnMissileBase(source, dest, type);
+    mo->angle -= SPREAD;
+    an = mo->angle >> ANGLETOFINESHIFT;
+    mo->momx = FixedMul(mo->info->speed, finecosine[an]);
+    mo->momy = FixedMul(mo->info->speed, finesine[an]);
+
+    mo = P_SpawnMissileBase(source, dest, type);
+    mo->angle += SPREAD;
+    an = mo->angle >> ANGLETOFINESHIFT;
+    mo->momx = FixedMul(mo->info->speed, finecosine[an]);
+    mo->momy = FixedMul(mo->info->speed, finesine[an]);
+  }
+  
+  return P_SpawnMissileBase(source, dest, type);
+}
 
 //
 // P_SpawnPlayerMissile

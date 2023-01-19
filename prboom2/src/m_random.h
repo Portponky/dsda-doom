@@ -127,6 +127,7 @@ typedef enum {
   pr_heretic,                 // #63
   pr_mbf21,                   // #64
   pr_hexen,                   // #65
+  pr_mobeffect,               // #66
 
   // End of new entries
   NUMPRCLASS               // MUST be last item in list

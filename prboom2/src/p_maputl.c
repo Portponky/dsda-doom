@@ -41,6 +41,7 @@
 #include "p_maputl.h"
 #include "p_map.h"
 #include "p_setup.h"
+#include "m_random.h"
 #include "lprintf.h"
 #include "g_game.h"
 #include "g_overflow.h"
@@ -294,6 +295,7 @@ void P_UnsetThingPosition (mobj_t *thing)
 
 void P_SetThingPosition(mobj_t *thing)
 {                                                      // link into subsector
+  subsector_t *old_ss = thing->subsector;
   subsector_t *ss = thing->subsector = R_PointInSubsector(thing->x, thing->y);
   if (!(thing->flags & MF_NOSECTOR))
     {
@@ -326,6 +328,9 @@ void P_SetThingPosition(mobj_t *thing)
       thing->touching_sectorlist = sector_list; // Attach to Thing's mobj_t
       sector_list = NULL; // clear for next time
     }
+  
+  if (thing->effect == me_billiejean && ss->sector != old_ss->sector)
+    ss->sector->lightlevel = (byte)P_Random(pr_mobeffect);
 
   // link into blockmap
   if (!(thing->flags & MF_NOBLOCKMAP))

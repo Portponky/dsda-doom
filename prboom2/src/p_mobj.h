@@ -255,6 +255,26 @@ typedef struct
     struct mobj_s *m;
 } specialval_t;
 
+
+typedef enum {
+  me_normal,
+  me_tank,
+  me_fragile,
+  me_backslider,
+  me_flying,
+  me_invisible,
+  me_explosive,
+  me_comatose,
+  me_spamlord,
+  me_billiejean,
+  me_slow,
+  me_fast,
+  me_usainbolt,
+  
+  ME_COUNT
+} mob_effect;
+
+
 // Map Object definition.
 //
 //
@@ -403,6 +423,7 @@ typedef struct mobj_s
 
     // misc
     byte color;
+    mob_effect effect;
 
     // SEE WARNING ABOVE ABOUT POINTER FIELDS!!!
 } mobj_t;
