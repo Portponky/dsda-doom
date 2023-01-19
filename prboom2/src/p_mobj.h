@@ -270,6 +270,7 @@ typedef enum {
   me_slow,
   me_fast,
   me_usainbolt,
+  me_popcorn,
   
   ME_COUNT
 } mob_effect;

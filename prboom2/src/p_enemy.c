@@ -1277,6 +1277,9 @@ void A_Chase(mobj_t *actor)
       if (P_CheckMissileRange(actor))
       {
         P_SetMobjState(actor, actor->info->missilestate);
+	    if (actor->effect == me_popcorn)
+          actor->momz = 1500*FRACUNIT/actor->info->mass;
+
         actor->flags |= MF_JUSTATTACKED;
         return;
       }
