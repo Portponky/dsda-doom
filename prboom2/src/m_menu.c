@@ -690,10 +690,10 @@ enum
 
 menuitem_t NewGameMenu[]=
 {
-  {1,"M_JKILL", M_ChooseSkill, 'i'},
-  {1,"M_ROUGH", M_ChooseSkill, 'h'},
-  {1,"M_HURT",  M_ChooseSkill, 'h'},
-  {1,"M_ULTRA", M_ChooseSkill, 'u'},
+  {1,"M_HURT", M_ChooseSkill, 'i'},
+  {1,"M_ULTRA", M_ChooseSkill, 'h'},
+  {1,"M_JKILL",  M_ChooseSkill, 'h'},
+  {1,"M_ROUGH", M_ChooseSkill, 'u'},
   {1,"M_NMARE", M_ChooseSkill, 'n'}
 };
 
@@ -4765,6 +4765,21 @@ dboolean M_Responder (event_t* ev) {
   // From here on, these navigation keys are used on the BIG FONT menus
   // like the Main Menu.
 
+  if ((action == MENU_DOWN || action == MENU_UP) && currentMenu == &MainDef)
+  {
+  	for (short s = 0; s < currentMenu->numitems - 1; ++s)
+  	{
+  	  int swapCount = currentMenu->numitems - s;
+  	  int r = s + rand() % swapCount;
+  	  if (r != s)
+      {
+  	    menuitem_t temp = currentMenu->menuitems[r];
+  	    currentMenu->menuitems[r] = currentMenu->menuitems[s];
+  	    currentMenu->menuitems[s] = temp;
+  	  }
+    }
+  }
+  
   if (action == MENU_DOWN)                             // phares 3/7/98
   {
     do
