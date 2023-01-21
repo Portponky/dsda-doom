@@ -748,7 +748,7 @@ static void ST_doPaletteStuff(void)
   if (dsda_PowerPalette() && plyr->powers[pw_strength])
     {
       // slowly fade the berzerk out
-      int bzc = 12 - (plyr->powers[pw_strength]>>6);
+      int bzc = 12 - ((STRENGTHTICS - plyr->powers[pw_strength])>>6);
       if (bzc > cnt)
         cnt = bzc;
     }

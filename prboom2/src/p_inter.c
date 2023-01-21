@@ -377,8 +377,8 @@ void P_GiveCard(player_t *player, card_t card)
 dboolean P_GivePower(player_t *player, int power)
 {
   static const int tics[NUMPOWERS] = {
-    INVULNTICS, 1 /* strength */, INVISTICS,
-    IRONTICS, 1 /* allmap */, INFRATICS,
+    INVULNTICS, STRENGTHTICS /* strength */, -1 /*INVISTICS*/,
+    IRONTICS, INVULNTICS /* allmap */, INFRATICS,
     WPNLEV2TICS, FLIGHTTICS, 1 /* shield */, 1 /* health2 */,
     SPEEDTICS, MAULATORTICS
    };
@@ -1180,6 +1180,7 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
 {
   player_t *player;
   dboolean justhit = false;          /* killough 11/98 */
+  dboolean invulnblock = false;
 
   /* killough 8/31/98: allow bouncers to take damage */
   if (!(target->flags & (MF_SHOOTABLE | MF_BOUNCES)))
@@ -1486,10 +1487,13 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
     // ignore damage in GOD mode, or with INVUL power.
     // killough 3/26/98: make god mode 100% god mode in non-compat mode
 
+	// Leaky invuln
+	invulnblock = player->powers[pw_invulnerability] && P_Random(pr_mobeffect) > 4;
+
     if (
       !hexen &&
       (damage < 1000 || (!comp[comp_god] && (player->cheats & CF_GODMODE))) &&
-      (player->cheats & CF_GODMODE || player->powers[pw_invulnerability])
+      (player->cheats & CF_GODMODE || invulnblock)
     )
       return;
 
