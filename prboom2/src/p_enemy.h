@@ -72,6 +72,7 @@ void A_StartFire(mobj_t *);
 void A_Fire(mobj_t *);
 void A_FireCrackle(mobj_t *);
 void A_Tracer(mobj_t *);
+void A_MissileFly(mobj_t *);
 void A_SkelWhoosh(mobj_t *);
 void A_SkelFist(mobj_t *);
 void A_SkelMissile(mobj_t *);

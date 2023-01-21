@@ -752,6 +752,7 @@ typedef enum
   S_PLASEXP4,
   S_PLASEXP5,
   S_ROCKET,
+  S_ROCKET2,
   S_BFGSHOT,
   S_BFGSHOT2,
   S_BFGLAND,

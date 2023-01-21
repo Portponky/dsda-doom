@@ -1742,7 +1742,7 @@ mobj_t* P_SpawnMobj(fixed_t x,fixed_t y,fixed_t z,mobjtype_t type)
   if (type != MT_PLAYER && ((mobj->flags & MF_COUNTKILL) || type == MT_SKULL))
   {
     mobj->effect = ((P_Random(pr_mobeffect) << 8) | P_Random(pr_mobeffect)) % 30;
-    //mobj->effect = me_billiejean;
+    //mobj->effect = me_homing;
   }
   if (mobj->effect >= ME_COUNT)
     mobj->effect = me_normal;
@@ -2731,6 +2731,8 @@ mobj_t* P_SpawnMissileBase(mobj_t* source,mobj_t* dest,mobjtype_t type)
     dist = 1;
 
   th->momz = (dest->z - source->z) / dist;
+
+  P_SetTarget(&th->tracer, dest);
 
   if (!raven)
   {

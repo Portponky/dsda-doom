@@ -1278,7 +1278,7 @@ void A_Chase(mobj_t *actor)
       {
         P_SetMobjState(actor, actor->info->missilestate);
 	    if (actor->effect == me_popcorn)
-          actor->momz = 1500*FRACUNIT/actor->info->mass;
+          actor->momz = 15*FRACUNIT;
 
         actor->flags |= MF_JUSTATTACKED;
         return;
@@ -1666,43 +1666,12 @@ void A_SkelMissile(mobj_t *actor)
 
 int     TRACEANGLE = 0xc000000;
 
-void A_Tracer(mobj_t *actor)
+void A_TracerAction(mobj_t *actor)
 {
   angle_t       exact;
   fixed_t       dist;
   fixed_t       slope;
   mobj_t        *dest;
-  mobj_t        *th;
-
-  /* killough 1/18/98: this is why some missiles do not have smoke
-   * and some do. Also, internal demos start at random gametics, thus
-   * the bug in which revenants cause internal demos to go out of sync.
-   *
-   * killough 3/6/98: fix revenant internal demo bug by subtracting
-   * levelstarttic from gametic.
-   *
-   * killough 9/29/98: use new "basetic" so that demos stay in sync
-   * during pauses and menu activations, while retaining old demo sync.
-   *
-   * leveltime would have been better to use to start with in Doom, but
-   * since old demos were recorded using gametic, we must stick with it,
-   * and improvise around it (using leveltime causes desync across levels).
-   */
-
-  if (logictic & 3)
-    return;
-
-  // spawn a puff of smoke behind the rocket
-  P_SpawnPuff(actor->x, actor->y, actor->z);
-
-  th = P_SpawnMobj (actor->x-actor->momx,
-                    actor->y-actor->momy,
-                    actor->z, MT_SMOKE);
-
-  th->momz = FRACUNIT;
-  th->tics -= P_Random(pr_tracer) & 3;
-  if (th->tics < 1)
-    th->tics = 1;
 
   // adjust direction
   dest = actor->tracer;
@@ -1746,6 +1715,53 @@ void A_Tracer(mobj_t *actor)
     actor->momz -= FRACUNIT/8;
   else
     actor->momz += FRACUNIT/8;
+}
+
+void A_Tracer(mobj_t *actor)
+{
+  angle_t       exact;
+  fixed_t       dist;
+  fixed_t       slope;
+  mobj_t        *dest;
+  mobj_t        *th;
+
+  /* killough 1/18/98: this is why some missiles do not have smoke
+   * and some do. Also, internal demos start at random gametics, thus
+   * the bug in which revenants cause internal demos to go out of sync.
+   *
+   * killough 3/6/98: fix revenant internal demo bug by subtracting
+   * levelstarttic from gametic.
+   *
+   * killough 9/29/98: use new "basetic" so that demos stay in sync
+   * during pauses and menu activations, while retaining old demo sync.
+   *
+   * leveltime would have been better to use to start with in Doom, but
+   * since old demos were recorded using gametic, we must stick with it,
+   * and improvise around it (using leveltime causes desync across levels).
+   */
+
+  if (logictic & 3)
+    return;
+
+  // spawn a puff of smoke behind the rocket
+  P_SpawnPuff(actor->x, actor->y, actor->z);
+
+  th = P_SpawnMobj (actor->x-actor->momx,
+                    actor->y-actor->momy,
+                    actor->z, MT_SMOKE);
+
+  th->momz = FRACUNIT;
+  th->tics -= P_Random(pr_tracer) & 3;
+  if (th->tics < 1)
+    th->tics = 1;
+
+  A_TracerAction(actor);
+}
+
+void A_MissileFly(mobj_t *actor)
+{
+  if (actor->target->effect == me_homing && actor->tracer)
+    A_TracerAction(actor);
 }
 
 void A_SkelWhoosh(mobj_t *actor)
