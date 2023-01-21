@@ -1040,7 +1040,7 @@ void P_PlayerThink (player_t* player)
     player->fixedcolormap = dsda_PowerPalette() &&
       (player->powers[pw_invulnerability] > 4*32 ||
       player->powers[pw_invulnerability] & 8) ? INVERSECOLORMAP :
-      player->powers[pw_infrared] > 4*32 || player->powers[pw_infrared] & 8;
+      player->powers[pw_infrared] > 100*TICRATE || player->powers[pw_infrared] & 8;
   else
   {
     if (!hexen && player->powers[pw_invulnerability])
