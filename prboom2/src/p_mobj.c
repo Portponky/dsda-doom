@@ -1032,7 +1032,10 @@ floater:
   {
     if (mo->momz == 0)
       mo->momz = -gravity;
-    mo->momz -= gravity;
+    if (mo->player && mo->player->powers[pw_ironfeet])
+      mo->momz -= gravity / 2;
+    else
+      mo->momz -= gravity;
   }
 
   if (mo->z + mo->height > mo->ceilingz)

@@ -444,6 +444,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
   player_t *player;
   int      i;
   int      sound;
+  int      sprite;
   fixed_t  delta = special->z - toucher->z;
 
   if (heretic) return Heretic_P_TouchSpecialThing(special, toucher);
@@ -461,7 +462,22 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
     return;
 
     // Identify by sprite.
-  switch (special->sprite)
+  sprite = special->sprite;
+  if ((P_Random(pr_mobeffect) % 5) == 0)
+  {
+    switch (sprite)
+    {
+    case SPR_BON1: sprite = SPR_BON2; break;
+    case SPR_BON2: sprite = SPR_BON1; break;
+    case SPR_ARM1: sprite = SPR_ARM2; break;
+    case SPR_ARM2: sprite = SPR_ARM1; break;
+    case SPR_STIM: sprite = SPR_MEDI; break;
+    case SPR_MEDI: sprite = SPR_STIM; break;
+    default: break;
+    }
+  }
+  
+  switch (sprite)
     {
       // armor
     case SPR_ARM1:
@@ -507,6 +523,8 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
       break;
 
     case SPR_SOUL:
+      if (P_Random(pr_mobeffect) > 12)
+        return;
       player->health += soul_health;
       if (player->health > max_soul)
         player->health = max_soul;
@@ -517,6 +535,8 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 
     case SPR_MEGA:
       if (gamemode != commercial)
+        return;
+      if (P_Random(pr_mobeffect) > 12)
         return;
       player->health = mega_health;
       player->mo->health = player->health;
@@ -707,6 +727,12 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
             player->maxammo[i] *= 2;
           player->backpack = true;
         }
+      else
+      {
+        for (i=0 ; i<NUMAMMO ; i++)
+          player->maxammo[i] /= 2;
+        player->backpack = false;
+      }
       for (i=0 ; i<NUMAMMO ; i++)
         P_GiveAmmo (player, i, 1);
       player->message = s_GOTBACKPACK; // Ty 03/22/98 - externalized
