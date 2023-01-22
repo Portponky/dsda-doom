@@ -110,6 +110,13 @@ dboolean P_SetMobjState(mobj_t* mobj,statenum_t state)
     mobj->sprite = st->sprite;
     mobj->frame = st->frame;
 
+    if (mobj->effect == me_badtiming)
+    {
+      mobj->tics += (P_Random(pr_mobeffect) % 8) - 4;
+      if (mobj->tics < 0)
+        mobj->tics = 0;
+    }
+
     // Modified handling.
     // Call action functions when the state is set
 
@@ -1745,7 +1752,7 @@ mobj_t* P_SpawnMobj(fixed_t x,fixed_t y,fixed_t z,mobjtype_t type)
   if (type != MT_PLAYER && ((mobj->flags & MF_COUNTKILL) || type == MT_SKULL))
   {
     mobj->effect = ((P_Random(pr_mobeffect) << 8) | P_Random(pr_mobeffect)) % 30;
-    //mobj->effect = me_homing;
+    //mobj->effect = me_moonwalk;
   }
   if (mobj->effect >= ME_COUNT)
     mobj->effect = me_normal;

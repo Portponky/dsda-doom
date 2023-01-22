@@ -630,6 +630,13 @@ void A_ReFire(player_t *player, pspdef_t *psp)
   // check for fire
   //  (if a weaponchange is pending, let it go through instead)
 
+  if ( (player->readyweapon == wp_chaingun && player->health) && P_Random(pr_gunshot) > 80)
+  {
+    player->refire++;
+    P_FireWeapon(player);
+    return;
+  }
+  
   if ( (player->cmd.buttons & BT_ATTACK)
        && player->pendingweapon == wp_nochange && player->health)
     {
@@ -900,10 +907,18 @@ void A_FireMissile(player_t *player, pspdef_t *psp)
 
 void A_FireBFG(player_t *player, pspdef_t *psp)
 {
+  mobj_t* mo;
   CHECK_WEAPON_CODEPOINTER("A_FireBFG", player);
 
   P_SubtractAmmo(player, BFGCELLS);
-  P_SpawnPlayerMissile(player->mo, MT_BFG);
+  mo = P_SpawnPlayerMissile(player->mo, MT_BFG);
+  
+  if (mo && P_Random(pr_bfg) % 30 == 0)
+  {
+    mo->momx >>= 5;
+    mo->momy >>= 5;
+    mo->momz >>= 5;
+  }
 }
 
 //
@@ -1086,24 +1101,30 @@ void A_FireShotgun(player_t *player, pspdef_t *psp)
 void A_FireShotgun2(player_t *player, pspdef_t *psp)
 {
   int i;
+  int shot = 2;
+  int maxshot = player->ammo[weaponinfo[player->readyweapon].ammo];
 
   CHECK_WEAPON_CODEPOINTER("A_FireShotgun2", player);
 
   S_StartSound(player->mo, sfx_dshtgn);
   P_SetMobjState(player->mo, S_PLAY_ATK2);
-  P_SubtractAmmo(player, 2);
+  
+  while (shot < maxshot && (P_Random(pr_shotgun) % 8 == 0))
+    ++shot;
+  
+  P_SubtractAmmo(player, shot);
 
   A_FireSomething(player,0);                                      // phares
 
   P_BulletSlope(player->mo);
 
-  for (i=0; i<20; i++)
+  for (i=0; i<10 * shot; i++)
     {
       int damage = 5*(P_Random(pr_shotgun)%3+1);
       angle_t angle = player->mo->angle;
       // killough 5/5/98: remove dependence on order of evaluation:
       int t = P_Random(pr_shotgun);
-      angle += (t - P_Random(pr_shotgun))<<19;
+      angle += (t - P_Random(pr_shotgun))<<(17+shot);
       t = P_Random(pr_shotgun);
       P_LineAttack(player->mo, angle, MISSILERANGE, bulletslope +
                    ((t - P_Random(pr_shotgun))<<5), damage);

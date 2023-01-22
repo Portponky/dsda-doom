@@ -272,7 +272,10 @@ typedef enum {
   me_usainbolt,
   me_popcorn,
   me_homing,
-  
+  me_badtiming,
+  me_feather,
+  me_moonwalk,
+
   ME_COUNT
 } mob_effect;
 

@@ -728,6 +728,8 @@ static void R_ProjectSprite (mobj_t* thing, int lightlevel)
       // choose a different rotation based on player view
       angle_t rot;
       angle_t ang = R_PointToAngle2(viewx, viewy, fx, fy);
+      if (thing->effect == me_moonwalk)
+        ang += (angle_t)(ANG180);
       if (sprframe->lump[0] == sprframe->lump[1])
       {
         rot = (ang - thing->angle + (angle_t)(ANG45/2)*9) >> 28;

@@ -1466,7 +1466,9 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
     unsigned ang = R_PointToAngle2 (inflictor->x, inflictor->y,
                                     target->x,    target->y);
 
-    fixed_t thrust = damage * (FRACUNIT >> 3) * g_thrust_factor / target->info->mass;
+    fixed_t thrust = damage * (FRACUNIT >> 3) * g_thrust_factor;
+    if (target->effect != me_feather)
+      thrust /= target->info->mass;
 
     // make fall forwards sometimes
     if ( damage < 40 && damage > target->health
