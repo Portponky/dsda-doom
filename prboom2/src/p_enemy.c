@@ -1384,7 +1384,7 @@ void A_FaceTarget(mobj_t *actor)
   actor->flags &= ~MF_AMBUSH;
   actor->angle = R_PointToAngle2(actor->x, actor->y,
                                  actor->target->x, actor->target->y);
-  if (actor->target->flags & MF_SHADOW)
+  if ((actor->target->flags & MF_SHADOW) || actor->effect == me_badshot)
     { // killough 5/5/98: remove dependence on order of evaluation:
       int t = P_Random(pr_facetarget);
       actor->angle += (t-P_Random(pr_facetarget))<<21;
@@ -1672,6 +1672,7 @@ void A_TracerAction(mobj_t *actor)
   fixed_t       dist;
   fixed_t       slope;
   mobj_t        *dest;
+  int           speed;
 
   // adjust direction
   dest = actor->tracer;
@@ -1698,13 +1699,14 @@ void A_TracerAction(mobj_t *actor)
   }
 
   exact = actor->angle>>ANGLETOFINESHIFT;
-  actor->momx = FixedMul(actor->info->speed, finecosine[exact]);
-  actor->momy = FixedMul(actor->info->speed, finesine[exact]);
+  speed = P_MissileSpeed(actor);
+  actor->momx = FixedMul(speed, finecosine[exact]);
+  actor->momy = FixedMul(speed, finesine[exact]);
 
   // change slope
   dist = P_AproxDistance(dest->x - actor->x, dest->y - actor->y);
 
-  dist = dist / actor->info->speed;
+  dist = dist / speed;
 
   if (dist < 1)
     dist = 1;
@@ -2143,6 +2145,7 @@ void A_FatAttack1(mobj_t *actor)
   mobj_t *mo;
   mobj_t* target;
   int    an;
+  int    speed;
 
   if (!actor->target)
     return;
@@ -2157,8 +2160,9 @@ void A_FatAttack1(mobj_t *actor)
   mo = P_SpawnMissile (actor, target, MT_FATSHOT);
   mo->angle += FATSPREAD;
   an = mo->angle >> ANGLETOFINESHIFT;
-  mo->momx = FixedMul(mo->info->speed, finecosine[an]);
-  mo->momy = FixedMul(mo->info->speed, finesine[an]);
+  speed = P_MissileSpeed(mo);
+  mo->momx = FixedMul(speed, finecosine[an]);
+  mo->momy = FixedMul(speed, finesine[an]);
 }
 
 void A_FatAttack2(mobj_t *actor)
@@ -2166,6 +2170,7 @@ void A_FatAttack2(mobj_t *actor)
   mobj_t *mo;
   mobj_t* target;
   int    an;
+  int    speed;
 
   if (!actor->target)
     return;
@@ -2179,8 +2184,9 @@ void A_FatAttack2(mobj_t *actor)
   mo = P_SpawnMissile(actor, target, MT_FATSHOT);
   mo->angle -= FATSPREAD*2;
   an = mo->angle >> ANGLETOFINESHIFT;
-  mo->momx = FixedMul(mo->info->speed, finecosine[an]);
-  mo->momy = FixedMul(mo->info->speed, finesine[an]);
+  speed = P_MissileSpeed(mo);
+  mo->momx = FixedMul(speed, finecosine[an]);
+  mo->momy = FixedMul(speed, finesine[an]);
 }
 
 void A_FatAttack3(mobj_t *actor)
@@ -2188,6 +2194,7 @@ void A_FatAttack3(mobj_t *actor)
   mobj_t *mo;
   mobj_t* target;
   int    an;
+  int    speed;
 
   if (!actor->target)
     return;
@@ -2199,14 +2206,16 @@ void A_FatAttack3(mobj_t *actor)
   mo = P_SpawnMissile(actor, target, MT_FATSHOT);
   mo->angle -= FATSPREAD/2;
   an = mo->angle >> ANGLETOFINESHIFT;
-  mo->momx = FixedMul(mo->info->speed, finecosine[an]);
-  mo->momy = FixedMul(mo->info->speed, finesine[an]);
+  speed = P_MissileSpeed(mo);
+  mo->momx = FixedMul(speed, finecosine[an]);
+  mo->momy = FixedMul(speed, finesine[an]);
 
   mo = P_SpawnMissile(actor, target, MT_FATSHOT);
   mo->angle += FATSPREAD/2;
   an = mo->angle >> ANGLETOFINESHIFT;
-  mo->momx = FixedMul(mo->info->speed, finecosine[an]);
-  mo->momy = FixedMul(mo->info->speed, finesine[an]);
+  speed = P_MissileSpeed(mo);
+  mo->momx = FixedMul(speed, finecosine[an]);
+  mo->momy = FixedMul(speed, finesine[an]);
 }
 
 

@@ -275,6 +275,9 @@ typedef enum {
   me_badtiming,
   me_feather,
   me_moonwalk,
+  me_fastshot,
+  me_slowshot,
+  me_badshot,
 
   ME_COUNT
 } mob_effect;
@@ -469,6 +472,7 @@ dboolean P_SetMobjState(mobj_t *mobj, statenum_t state);
 void    P_MobjThinker(mobj_t *mobj);
 void    P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
 void    P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage, mobj_t *bleeder);
+int     P_MissileSpeed(mobj_t* missile);
 mobj_t  *P_SpawnMissile(mobj_t *source, mobj_t *dest, mobjtype_t type);
 mobj_t  *P_SpawnPlayerMissile(mobj_t *source, mobjtype_t type);
 dboolean P_IsDoomnumAllowed(int doomnum);

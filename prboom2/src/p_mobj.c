@@ -1749,11 +1749,9 @@ mobj_t* P_SpawnMobj(fixed_t x,fixed_t y,fixed_t z,mobjtype_t type)
   if (!((mobj->flags ^ MF_COUNTKILL) & (MF_FRIEND | MF_COUNTKILL)))
     totallive++;
   
-  if (type != MT_PLAYER && ((mobj->flags & MF_COUNTKILL) || type == MT_SKULL))
-  {
-    mobj->effect = ((P_Random(pr_mobeffect) << 8) | P_Random(pr_mobeffect)) % 30;
-    //mobj->effect = me_moonwalk;
-  }
+  if ((type != MT_PLAYER && ((mobj->flags & MF_COUNTKILL) || type == MT_SKULL)) &&
+      P_Random(pr_mobeffect) % 10 == 0)
+    mobj->effect = (P_Random(pr_mobeffect) % (ME_COUNT - 1)) + 1;
   if (mobj->effect >= ME_COUNT)
     mobj->effect = me_normal;
   
@@ -1773,6 +1771,8 @@ mobj_t* P_SpawnMobj(fixed_t x,fixed_t y,fixed_t z,mobjtype_t type)
     break;
   case me_comatose:
     mobj->flags |= MF_AMBUSH;
+    break;
+  default:
     break;
   }
 
@@ -2666,12 +2666,23 @@ dboolean P_CheckMissileSpawn (mobj_t* th)
 // P_SpawnMissile
 //
 
+int P_MissileSpeed(mobj_t* missile)
+{
+  int speed = missile->info->speed;
+  if (missile->target->effect == me_slowshot)
+    return speed / 2;
+  if (missile->target->effect == me_fastshot)
+    return speed + 5*FRACUNIT;
+  return speed;
+}
+
 mobj_t* P_SpawnMissileBase(mobj_t* source,mobj_t* dest,mobjtype_t type)
 {
   fixed_t z;
   mobj_t* th;
   angle_t an;
   int     dist;
+  int     speed;
 
   if (!raven)
   {
@@ -2723,7 +2734,7 @@ mobj_t* P_SpawnMissileBase(mobj_t* source,mobj_t* dest,mobjtype_t type)
   an = R_PointToAngle2(source->x, source->y, dest->x, dest->y);
 
   // fuzzy player
-  if (dest->flags & MF_SHADOW)
+  if ((dest->flags & MF_SHADOW) || source->effect == me_badshot)
   {  // killough 5/5/98: remove dependence on order of evaluation:
     int t = P_Random(pr_shadow);
     an += (t - P_Random(pr_shadow)) << g_fuzzy_aim_shift;
@@ -2731,11 +2742,12 @@ mobj_t* P_SpawnMissileBase(mobj_t* source,mobj_t* dest,mobjtype_t type)
 
   th->angle = an;
   an >>= ANGLETOFINESHIFT;
-  th->momx = FixedMul(th->info->speed, finecosine[an]);
-  th->momy = FixedMul(th->info->speed, finesine[an]);
+  speed = P_MissileSpeed(th);
+  th->momx = FixedMul(speed, finecosine[an]);
+  th->momy = FixedMul(speed, finesine[an]);
 
   dist = P_AproxDistance(dest->x - source->x, dest->y - source->y);
-  dist = dist / th->info->speed;
+  dist = dist / speed;
 
   if (dist < 1)
     dist = 1;
@@ -2759,19 +2771,22 @@ mobj_t* P_SpawnMissile(mobj_t* source,mobj_t* dest,mobjtype_t type)
   {
     mobj_t *mo;
     int    an;
+    int    speed;
     const int SPREAD = (ANG90/12);
     
     mo = P_SpawnMissileBase(source, dest, type);
     mo->angle -= SPREAD;
     an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul(mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul(mo->info->speed, finesine[an]);
+    speed = P_MissileSpeed(mo);
+    mo->momx = FixedMul(speed, finecosine[an]);
+    mo->momy = FixedMul(speed, finesine[an]);
 
     mo = P_SpawnMissileBase(source, dest, type);
     mo->angle += SPREAD;
     an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul(mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul(mo->info->speed, finesine[an]);
+    speed = P_MissileSpeed(mo);
+    mo->momx = FixedMul(speed, finecosine[an]);
+    mo->momy = FixedMul(speed, finesine[an]);
   }
   
   return P_SpawnMissileBase(source, dest, type);
