@@ -784,6 +784,14 @@ void A_GunFlash(player_t *player, pspdef_t *psp)
   A_FireSomething(player,0);                                      // phares
 }
 
+void A_GunFlashDelay(player_t *player, pspdef_t *psp)
+{
+  A_GunFlash(player, psp);
+
+  if ((P_Random(pr_bfg) % 25) == 0)
+    psp->tics += TICRATE/2;
+}
+
 //
 // WEAPON ATTACKS
 //
@@ -1061,6 +1069,7 @@ void A_FirePistol(player_t *player, pspdef_t *psp)
 {
   CHECK_WEAPON_CODEPOINTER("A_FirePistol", player);
 
+  player->mo->angle -= (angle_t)(ANG45/4);
   S_StartSound(player->mo, sfx_pistol);
 
   P_SetMobjState(player->mo, S_PLAY_ATK2);
@@ -1068,7 +1077,9 @@ void A_FirePistol(player_t *player, pspdef_t *psp)
 
   A_FireSomething(player,0);                                      // phares
   P_BulletSlope(player->mo);
+
   P_GunShot(player->mo, !player->refire);
+  player->mo->angle += (angle_t)(ANG45/4);
 }
 
 //
@@ -1087,6 +1098,12 @@ void A_FireShotgun(player_t *player, pspdef_t *psp)
   P_SubtractAmmo(player, 1);
 
   A_FireSomething(player,0);                                      // phares
+
+  if ((P_Random(pr_shotgun) % 35) == 0)
+  {
+    A_FireMissile(player, psp);
+    return;
+  }
 
   P_BulletSlope(player->mo);
 

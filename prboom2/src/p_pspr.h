@@ -118,6 +118,7 @@ void A_LoadShotgun2();
 void A_CloseShotgun2();
 void A_FireCGun();
 void A_GunFlash();
+void A_GunFlashDelay();
 void A_FireMissile();
 void A_Saw();
 void A_FirePlasma();
