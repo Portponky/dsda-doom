@@ -852,6 +852,23 @@ void A_Saw(player_t *player, pspdef_t *psp)
 
   CHECK_WEAPON_CODEPOINTER("A_Saw", player);
 
+  // butterfingers
+  if ((P_Random(pr_saw) % 100) == 0)
+  {
+    mobj_t *mo = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_MISC26);
+    angle_t an = player->mo->angle;
+
+    mo->angle = an;
+    mo->momx = FixedMul(10*FRACUNIT, finecosine[an>>ANGLETOFINESHIFT]);
+    mo->momy = FixedMul(10*FRACUNIT, finesine[an>>ANGLETOFINESHIFT]);
+    mo->momz = 10 * FRACUNIT;
+
+    player->weaponowned[wp_chainsaw] = false;
+    player->readyweapon = wp_fist;
+    psp->state = &doom_states[S_PUNCH3];
+    return;
+  }
+
   damage = 2*(P_Random(pr_saw)%10+1);
   angle = player->mo->angle;
   // killough 5/5/98: remove dependence on order of evaluation:
@@ -1001,6 +1018,15 @@ void A_FireOldBFG(player_t *player, pspdef_t *psp)
 
 void A_FirePlasma(player_t *player, pspdef_t *psp)
 {
+  fixed_t dx, dy;
+  angle_t an = player->mo->angle + ANG180;
+
+  an = an >> ANGLETOFINESHIFT;
+  dx = FixedMul(FRACUNIT/2, finecosine[an]);
+  dy = FixedMul(FRACUNIT/2, finesine[an]);
+  player->mo->momx += dx;
+  player->mo->momy += dy;
+
   CHECK_WEAPON_CODEPOINTER("A_FirePlasma", player);
 
   P_SubtractAmmo(player, 1);

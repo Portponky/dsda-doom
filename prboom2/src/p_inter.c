@@ -754,6 +754,10 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
       break;
 
     case SPR_CSAW:
+      // can't grab moving saw
+      if (special->momx | special->momy)
+        return;
+
       if (!P_GiveWeapon (player, wp_chainsaw, false) )
         return;
       player->message = s_GOTCHAINSAW; // Ty 03/22/98 - externalized
