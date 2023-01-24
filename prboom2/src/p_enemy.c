@@ -2377,6 +2377,23 @@ void A_PainAttack(mobj_t *actor)
 void A_PainDie(mobj_t *actor)
 {
   A_Fall(actor);
+  if (P_Random(pr_skullfly) % 12 == 0)
+  {
+    mobj_t *newmobj = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SERGEANT);
+    if ((newmobj->z >
+         (newmobj->subsector->sector->ceilingheight - newmobj->height)) ||
+        (newmobj->z < newmobj->subsector->sector->floorheight) ||
+        !P_TryMove(newmobj, newmobj->x, newmobj->y, false))
+    {
+      // kill it immediately
+      P_DamageMobj(newmobj,actor,actor,10000);
+      return;
+    }
+
+    P_UpdateThinker(&newmobj->thinker);
+    return;
+  }
+
   A_PainShootSkull(actor, actor->angle+ANG90);
   A_PainShootSkull(actor, actor->angle+ANG180);
   A_PainShootSkull(actor, actor->angle+ANG270);
