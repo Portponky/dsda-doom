@@ -235,6 +235,9 @@ manual_floor:
         }
       }
     }
+
+    P_ManipulateFloor(floor);
+
     if (manual) return rtn;
   }
   return rtn;
@@ -583,6 +586,7 @@ manual_lift:
         break;
     }
 
+    P_ManipulatePlat(plat);
     S_StartSound((mobj_t *)&sec->soundorg,sfx_pstart);
     P_AddActivePlat(plat); // add this plat to the list of active plats
 
@@ -1146,6 +1150,9 @@ manual_door:
       default:
         break;
     }
+
+    P_ManipulateDoor(door);
+
     if (manual)
       return rtn;
   }

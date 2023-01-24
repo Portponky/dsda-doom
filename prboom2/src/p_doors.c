@@ -595,6 +595,9 @@ manual_door://e6y
       default:
         break;
     }
+
+    P_ManipulateDoor(door);
+
     if (zerotag_manual) return rtn; //e6y
   }
   return rtn;
@@ -803,6 +806,9 @@ int EV_VerticalDoor
   // find the top and bottom of the movement range
   door->topheight = P_FindLowestCeilingSurrounding(sec);
   door->topheight -= 4*FRACUNIT;
+
+  P_ManipulateDoor(door);
+
   return 1;
 }
 

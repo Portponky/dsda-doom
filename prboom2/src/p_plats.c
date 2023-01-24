@@ -610,6 +610,7 @@ manual_plat://e6y
       default:
         break;
     }
+    P_ManipulatePlat(plat);
     P_AddActivePlat(plat);  // add plat to list of active plats
     if (zerotag_manual) return rtn; //e6y
   }

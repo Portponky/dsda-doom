@@ -683,6 +683,9 @@ manual_floor://e6y
       default:
         break;
     }
+
+    P_ManipulateFloor(floor);
+
     if (zerotag_manual) return rtn; //e6y
   }
   return rtn;
@@ -1182,6 +1185,8 @@ void P_SpawnElevator(sector_t *sec, line_t *line, elevator_e type, fixed_t speed
       elevator->ceilingdestheight = sec->ceilingheight - height;
       break;
   }
+
+  P_ManipulateElevator(elevator);
 }
 
 int EV_DoZDoomElevator(line_t *line, elevator_e type, fixed_t speed, fixed_t height, int tag)

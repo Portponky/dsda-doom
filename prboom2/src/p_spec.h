@@ -1687,6 +1687,11 @@ int EV_TeleportGroup(short group_tid, mobj_t *thing, short source_tid, short des
 int EV_TeleportInSector(int tag, short source_tid, short dest_tid,
                         dboolean fog, short group_tid);
 
+void P_ManipulateDoor(vldoor_t* door);
+void P_ManipulateElevator(elevator_t* elevator);
+void P_ManipulateFloor(floormove_t* flr);
+void P_ManipulatePlat(plat_t* plt);
+
 #define NO_CRUSH -1
 #define DOOM_CRUSH 10
 

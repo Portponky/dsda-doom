@@ -7830,3 +7830,39 @@ static void Hexen_P_SpawnSpecials(void)
     // Initialize flat and texture animations
     P_InitFTAnims();
 }
+
+void P_ManipulateDoor(vldoor_t* door)
+{
+  int r = P_Random(pr_plats) % 5;
+  if (r == 0)
+    door->speed /= 10;
+  else if (r == 1)
+    door->speed *= 4;
+}
+
+void P_ManipulateElevator(elevator_t* elevator)
+{
+  int r = P_Random(pr_plats) % 5;
+  if (r == 0)
+    elevator->speed /= 4;
+  else if (r == 1)
+    elevator->speed *= 4;
+}
+
+void P_ManipulateFloor(floormove_t* flr)
+{
+  int r = P_Random(pr_plats) % 5;
+  if (r == 0)
+    flr->speed /= 4;
+  else if (r == 1)
+    flr->speed *= 4;
+}
+
+void P_ManipulatePlat(plat_t* plt)
+{
+  int r = P_Random(pr_plats) % 5;
+  if (r == 0)
+    plt->speed /= 4;
+  else if (r == 1)
+    plt->speed *= 4;
+}
