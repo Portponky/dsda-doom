@@ -7833,7 +7833,7 @@ static void Hexen_P_SpawnSpecials(void)
 
 void P_ManipulateDoor(vldoor_t* door)
 {
-  int r = P_Random(pr_plats) % 5;
+  int r = P_Random(pr_plats) % 40;
   if (r == 0)
     door->speed /= 10;
   else if (r == 1)
@@ -7842,7 +7842,7 @@ void P_ManipulateDoor(vldoor_t* door)
 
 void P_ManipulateElevator(elevator_t* elevator)
 {
-  int r = P_Random(pr_plats) % 5;
+  int r = P_Random(pr_plats) % 40;
   if (r == 0)
     elevator->speed /= 4;
   else if (r == 1)
@@ -7851,7 +7851,7 @@ void P_ManipulateElevator(elevator_t* elevator)
 
 void P_ManipulateFloor(floormove_t* flr)
 {
-  int r = P_Random(pr_plats) % 5;
+  int r = P_Random(pr_plats) % 40;
   if (r == 0)
     flr->speed /= 4;
   else if (r == 1)
@@ -7860,7 +7860,7 @@ void P_ManipulateFloor(floormove_t* flr)
 
 void P_ManipulatePlat(plat_t* plt)
 {
-  int r = P_Random(pr_plats) % 5;
+  int r = P_Random(pr_plats) % 40;
   if (r == 0)
     plt->speed /= 4;
   else if (r == 1)
